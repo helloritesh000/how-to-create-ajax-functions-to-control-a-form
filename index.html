@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <script src="js/jquery-1.4.1.min.js" type="text/javascript"></script>
+<script type = "text/javascript">
+    function PopulateContinents() {
+        var producto = $('#combo_produto').val();
+ 
+        if (producto == "") {
+			alert("Please select a valid product");
+		}
+        else {
+            $('producto').empty().append('<option selected="selected" value="0">Loading...</option>');
+            $.ajax({
+                type: "POST",
+                url: pageUrl + '<enter the url of server method created>',
+                data: '{producto: ' + producto + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(datas){
+					for(i=0; i<datas.length; i++)
+					{
+						$('#combo_projeto options').append("<option value='"+datas[i].Value+"'>"+datas[i].Text+"</option>");
+					}
+				},
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+    }
+</script>
+
+<form action="/arquiteturas/store" method="post" role="form" class="form-horizontal">
+<input type="hidden" name="_token" value="{{ csrf_token() }}">
+<div class="form-group  {{$errors->has('combo_produto')? ' has-error' : '' }}">
+   <label class="col-md-2 control-label">Product</label>
+   <div class="col-md-8">
+   <select class="form-control search-select" name="combo_produto" 
+ id="combo_produto">
+                  <option value="0">Choose</option>
+                  @foreach($produtos as $value)
+                    <option @if(old('combo_produto')==$value->id){{'selected'}}@endif value='{{$value->id}}'>{{$value->nome}}</option>
+                  @endforeach 
+                </select>
+                 <span class="help-block">
+                  @if($errors->has('combo_produto'))
+                    @foreach ($errors->get('combo_produto') as $error)
+                      <b>{{$error}}</b>
+                    @endforeach
+                  @endif
+                 </span>
+              </div> 
+            </div>
+
+              <!--Projet.-->
+              <div class="form-group  {{$errors->has('combo_projeto')? ' has-error' : '' }}">
+                  <label class="col-md-2 control-label">Project</label>
+                   <div class="col-md-8">
+                     <select class="form-control search-select" name="combo_projeto" id="combo_projeto">
+                       <option value="0">Choose</option>
+                       @foreach($produtos as $value)
+                      <option @if(old('combo_projeto')==$value->id){{'selected'}}@endif value='{{$value->id}}'>{{$value->nome}}</option>
+                       @endforeach 
+
+                     </select>
+                      <span class="help-block">
+                       @if($errors->has('combo_projeto'))
+                         @foreach ($errors->get('combo_projeto') as $error)
+                           <b>{{$error}}</b>
+                         @endforeach
+                       @endif
+                      </span>
+                   </div> 
+                 </div>
+				 
+				 </body>
+</html>
